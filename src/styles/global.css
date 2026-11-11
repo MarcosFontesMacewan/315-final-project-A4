@@ -1,0 +1,90 @@
+/* ---- Variables ---- */
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f2f2f2;
+  --color-border: #cccccc;
+  --color-text: #222222;
+  --color-muted: #666666;
+  --color-primary: #4a4a4a;
+  --color-primary-hover: #333333;
+  --radius: 6px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+}
+
+/* ---- Reset ---- */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+h1, h2, h3, p { margin: 0 0 var(--space-2) 0; }
+img { display: block; max-width: 100%; }
+
+/* ---- Layout ---- */
+.app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+.page-content { padding: var(--space-4); flex: 1; }
+
+/* ---- Navbar ---- */
+.navbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+.nav-links { display: flex; gap: var(--space-4); }
+.nav-links a { text-decoration: none; color: var(--color-text); }
+.logout-btn { background: none; border: none; cursor: pointer; }
+
+/* ---- Buttons / chips ---- */
+.btn { padding: var(--space-2) var(--space-3); border-radius: var(--radius);
+       border: 1px solid var(--color-border); cursor: pointer; }
+.btn-primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+.btn-primary:hover { background: var(--color-primary-hover); }
+
+.chip { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--color-border);
+        background: #fff; cursor: pointer; }
+.chip-active { background: var(--color-primary); color: #fff; }
+
+/* ---- Search / toolbar ---- */
+.search-bar { padding: var(--space-2); border: 1px solid var(--color-border);
+              border-radius: var(--radius); width: 100%; max-width: 360px; }
+.catalog-toolbar { display: flex; flex-wrap: wrap; gap: var(--space-3);
+                   align-items: center; margin-bottom: var(--space-4); }
+.filter-group { display: flex; gap: var(--space-1); align-items: center; }
+
+/* ---- Book grid (responsive) ---- */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-3);
+}
+.book-card { background: var(--color-surface); border-radius: var(--radius); padding: var(--space-2); }
+.book-cover { aspect-ratio: 2 / 3; background: var(--color-border); margin-bottom: var(--space-2); }
+.book-cover img { width: 100%; height: 100%; object-fit: cover; }
+.book-title { font-size: 0.95rem; margin: 0; }
+.book-author { font-size: 0.8rem; color: var(--color-muted); }
+
+/* ---- Auth ---- */
+.auth-page { display: grid; place-items: center; min-height: 100vh; padding: var(--space-4); }
+.auth-card { background: var(--color-surface); padding: var(--space-5);
+             border-radius: var(--radius); display: flex; flex-direction: column;
+             gap: var(--space-2); width: 100%; max-width: 360px; }
+.auth-card input { padding: var(--space-2); border: 1px solid var(--color-border);
+                   border-radius: var(--radius); }
+.error { color: #b00020; }
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .book-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .book-grid { grid-template-columns: repeat(2, 1fr); } 
+  .page-content { padding: var(--space-3); }
+  .nav-links { display: none; } /* TODO: implement hamburger menu */
+}
