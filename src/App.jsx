@@ -14,6 +14,8 @@ import ManageBooks from './pages/librarian/ManageBooks';
 import Loans from './pages/librarian/Loans';
 import Members from './pages/librarian/Members';
 import Suspensions from './pages/librarian/Suspensions';
+import LoanRequests from './pages/librarian/LoanRequests';
+import RenewalRequests from './pages/librarian/RenewalRequests.jsx';
 
 export default function App() {
   return (
@@ -35,6 +37,8 @@ export default function App() {
         <Route path="/librarian/books" element={<ManageBooks />} />
         <Route path="/librarian/loans" element={<Loans />} />
         <Route path="/librarian/members" element={<Members />} />
+        <Route path="/librarian/members/loan-request" element={<LoanRequests />} />
+        <Route path="/librarian/members/renewal-request" element={<RenewalRequests />} />
         <Route path="/librarian/suspensions" element={<Suspensions />} />
       </Route>
 

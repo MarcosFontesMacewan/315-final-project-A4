@@ -40,6 +40,7 @@ img { display: block; max-width: 100%; }
 .nav-links { display: flex; gap: var(--space-4); }
 .nav-links a { text-decoration: none; color: var(--color-text); }
 .logout-btn { background: none; border: none; cursor: pointer; }
+.menu-btn { display: none; } /* show on phones only */
 
 /* ---- Buttons / chips ---- */
 .btn { padding: var(--space-2) var(--space-3); border-radius: var(--radius);
@@ -86,5 +87,7 @@ img { display: block; max-width: 100%; }
 @media (max-width: 600px) {
   .book-grid { grid-template-columns: repeat(2, 1fr); } 
   .page-content { padding: var(--space-3); }
+  .navbar { flex-wrap: wrap; }
+  .menu-btn { display: inline-block; }
   .nav-links { display: none; } /* TODO: implement hamburger menu */
 }
