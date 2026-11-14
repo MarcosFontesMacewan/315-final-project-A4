@@ -88,3 +88,46 @@ img { display: block; max-width: 100%; }
   .page-content { padding: var(--space-3); }
   .nav-links { display: none; } /* TODO: implement hamburger menu */
 }
+
+/* Dashboard */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.dashboard-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  aspect-ratio: 1 / 1; 
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--space-3);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dashboard-card:hover {
+  background: #e6e6e6; 
+}
+
+.dashboard-card h2 {
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: normal;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-card {
+    aspect-ratio: auto; 
+    padding: var(--space-4);
+  }
+}
