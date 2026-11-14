@@ -171,8 +171,8 @@ export function DataProvider({ children }) {
     members, books, copies, loans, requests, renewals,
     availableCopies, activeLoansForMember, hasUnpaidFees, canBorrow,
     borrowBook, renewLoan, payFee, suspendMember, unsuspendMember,
-    addMember, cancelRequest, approveRenewal, denyRenewal, setCopyStatus,
-    addBook, removeBook, approveRequest, denyRequest, returnLoan,
+    addMember, addBook, removeBook,
+    approveRequest, denyRequest, returnLoan,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

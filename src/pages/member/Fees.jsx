@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { todayString } from '../../utils/dates';
-import { daysOverdue, feeOwed, formatMoney, bookForLoan } from '../../utils/rules';
+import { daysOverdue, feeOwed, formatMoney, bookForLoan } from '../../utils/businessRules';
 import { validateCard } from '../../utils/validation';
 import FormField from '../../components/forms/FormField';
-import './Forms.css';
+import '../../styles/forms.css';
 
 export default function Fees() {
   const { user } = useAuth();

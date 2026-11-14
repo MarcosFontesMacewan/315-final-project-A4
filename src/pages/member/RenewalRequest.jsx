@@ -5,7 +5,7 @@ import { useData } from '../../context/DataContext';
 import { todayString, addDays } from '../../utils/dates';
 import { bookForLoan, renewalBlockReason, renewalDaysError } from '../../utils/businessRules';
 import FormField from '../../components/forms/FormField';
-import './styles/forms.css';
+import '../../styles/forms.css';
 
 export default function RenewalRequest() {
   const { user } = useAuth();
