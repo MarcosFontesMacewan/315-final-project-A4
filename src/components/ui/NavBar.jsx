@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export default function NavBar({ librarian = false }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false); // phone menu
 
   function handleLogout() {
     logout();
@@ -12,12 +14,13 @@ export default function NavBar({ librarian = false }) {
 
   return (
     <header className="navbar">
-      <nav className="nav-links">
+      <button className="menu-btn" onClick={() => setMenuOpen(!menuOpen)}>Menu</button>
+      <nav className={menuOpen ? 'nav-links nav-open' : 'nav-links'} onClick={() => setMenuOpen(false)}>
         {librarian ? (
           <>
             <Link to="/librarian/home">Dashboard</Link>
             <Link to="/librarian/books">Books</Link>
-            <Link to="/librarian/loans">Loans</Link>
+            <Link to="/librarian/loans">Loans and Returns</Link>
             <Link to="/librarian/members">Members</Link>
           </>
         ) : (
