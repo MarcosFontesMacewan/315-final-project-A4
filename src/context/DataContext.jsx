@@ -19,7 +19,7 @@ export function DataProvider({ children }) {
   const [requests, setRequests] = useState(initialRequests);
   const [renewals, setRenewals] = useState(initialRenewalRequests);
 
-  // All lists in one object. The rule functions in utils/rules.js take this.
+  // All lists in one object
   const data = { members, books, copies, loans, requests, renewals };
   const nowText = () => new Date().toISOString().slice(0, 19);
 
@@ -150,7 +150,24 @@ export function DataProvider({ children }) {
     return { ok: true };
   }
 
-  function denyRequest(requestId) { /* TODO */ }
+  // Shared by deny and cancel and only a Pending request can be closed
+  function closeRequest(requestId, changes) {
+    const req = requests.find((r) => r.id === requestId);
+    if (!req || req.status !== 'Pending') return { ok: false, reason: 'Request is not pending.' };
+
+    setRequests((prev) => prev.map((r) => (r.id === requestId ? { ...r, ...changes } : r)));
+
+    return { ok: true };
+  }
+
+  function denyRequest(requestId, librarianId = 'L001') {
+    return closeRequest(requestId, { status: 'Denied', decidedBy: librarianId, decidedAt: nowText() });
+  }
+
+  // The member cancels their own request
+  function cancelRequest(requestId) {
+    return closeRequest(requestId, { status: 'Cancelled' });
+  }
   function returnLoan(loanId) {
     const loan = loans.find((l) => l.id === loanId);
     if (!loan || loan.status !== 'Active') return { ok: false, reason: 'Loan is not active.' };
@@ -167,12 +184,49 @@ export function DataProvider({ children }) {
     return { ok: true };
   }
 
+  function approveRenewal(renewalId, librarianId = 'L001') {
+    const renewal = renewals.find((r) => r.id === renewalId);
+    if (!renewal || renewal.status !== 'Pending') return { ok: false, reason: 'Renewal is not pending.' };
+
+    // The loan gets the new due date, and the renewal is Approved
+    setLoans((prev) => prev.map((l) => (l.id === renewal.loanId
+      ? { ...l, renewCount: l.renewCount + 1, expectedReturnDate: renewal.newReturnDate } : l)));
+    setRenewals((prev) => prev.map((r) => (r.id === renewalId
+      ? { ...r, status: 'Approved', decidedBy: librarianId, decidedAt: nowText() } : r)));
+
+    return { ok: true };
+  }
+
+  // The loan does not change when a renewal is denied
+  function denyRenewal(renewalId, librarianId = 'L001') {
+    const renewal = renewals.find((r) => r.id === renewalId);
+    if (!renewal || renewal.status !== 'Pending') return { ok: false, reason: 'Renewal is not pending.' };
+
+    setRenewals((prev) => prev.map((r) => (r.id === renewalId
+      ? { ...r, status: 'Denied', decidedBy: librarianId, decidedAt: nowText() } : r)));
+
+    return { ok: true };
+  }
+
+  // Librarian switches a copy between Available and Unavailable
+  function setCopyStatus(copyId, status) {
+    const copy = copies.find((c) => c.id === copyId);
+    if (!copy) return { ok: false, reason: 'Copy not found.' };
+    if (copy.status === 'OnLoan') return { ok: false, reason: 'This copy is on loan.' };
+    if (status !== 'Available' && status !== 'Unavailable') return { ok: false, reason: 'Use Available or Unavailable.' };
+
+    setCopies((prev) => prev.map((c) => (c.id === copyId ? { ...c, status } : c)));
+
+    return { ok: true };
+  }
+
   const value = {
     members, books, copies, loans, requests, renewals,
     availableCopies, activeLoansForMember, hasUnpaidFees, canBorrow,
     borrowBook, renewLoan, payFee, suspendMember, unsuspendMember,
     addMember, addBook, removeBook,
-    approveRequest, denyRequest, returnLoan,
+    approveRequest, denyRequest, cancelRequest, returnLoan,
+    approveRenewal, denyRenewal, setCopyStatus,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

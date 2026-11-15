@@ -51,6 +51,32 @@ export default function Fees() {
 
   if (!user) return <div className="form-page"><p>Please <Link to="/">log in</Link> first.</p></div>;
 
+  // After a payment, show a receipt
+  if (receipt) {
+    return (
+      <div className="form-page">
+        <h1>Payment received</h1>
+        <div className="form-card">
+          <p>{formatMoney(receipt.amount)} paid for "{receipt.title}".</p>
+          <Link to="/home/rentals">Back to Rentals</Link>
+          <button className="btn btn-primary" onClick={() => setReceipt(null)}>Pay another fee</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (owing.length === 0) {
+    return (
+      <div className="form-page">
+        <h1>Pay Overdue Fees</h1>
+        <div className="form-card">
+          <p>You have no fees to pay.</p>
+          <Link to="/home/rentals">Back to Rentals</Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="form-page">
       <h1>Pay Overdue Fees</h1>
