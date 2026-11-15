@@ -1,3 +1,4 @@
+import { daysFromToday } from '../utils/dates.js';
 // Mock Library Members
 
 export const initialMembers = [
@@ -48,8 +49,8 @@ export const initialBooks = [
     genre: 'Fiction', language: 'Spanish', publishDate: '1970',
     coverUrl: 'https://covers.openlibrary.org/b/isbn/9780307474728-M.jpg' },
   { id: 'B010', isbn: '9780316595001', title: 'The Wolves of War', author: 'John Gwynne',
-    genre: 'Fantasy', language: 'English', publishDate: '2026-11-03',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/9780316595001-M.jpg' },
+    genre: 'Fantasy', language: 'English', publishDate: daysFromToday(-12), // This way it will be new release book ot by the end of the term
+    coverUrl: null }, // no cover in openLibrary yet
 ];
 
 // Mock Book Statuses
