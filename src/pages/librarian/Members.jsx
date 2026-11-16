@@ -1,3 +1,46 @@
+import { useNavigate } from 'react-router-dom';
+import { initialMembers } from '../../data/mockData'; // Importing directly for the prototype
+
 export default function Members() {
-  return <div className="page"><h1>Members</h1><p>TODO</p></div>;
+  const navigate = useNavigate();
+
+  return (
+    <div className="page">
+      {/* Top Header Area matching wireframe */}
+      <div className="members-header">
+        <h1>Member List</h1>
+        
+        <div className="action-buttons">
+          <button className="btn" onClick={() => navigate('/librarian/loans')}>
+            Loan Requests
+          </button>
+          <button className="btn" onClick={() => navigate('/librarian/loans')}>
+            Renewal Requests
+          </button>
+          <button className="btn" onClick={() => navigate('/librarian/suspensions')}>
+            View Suspensions
+          </button>
+        </div>
+      </div>
+
+      <hr className="divider" />
+
+      {/* Member Grid */}
+      <div className="members-grid">
+        {initialMembers.map((member) => (
+          <div key={member.id} className="member-card">
+            {/* Default Image */}
+            <img src="/person.png" alt="Member avatar" className="member-avatar" />
+            
+            {/* User Info */}
+            <h3 className="member-name">{member.firstName} {member.lastName}</h3>
+            <p className="member-id">ID: {member.id}</p>
+            <p className={`member-status ${member.status.toLowerCase()}`}>
+              Status: {member.status}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

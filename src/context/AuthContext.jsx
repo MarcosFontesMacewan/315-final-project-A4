@@ -24,8 +24,11 @@ export function AuthProvider({ children }) {
     }
 
     // No need to persist yet
-    setUser({ role: 'member', id: 'M' + Date.now(), firstName, lastName, email,
-              status: 'Active' });
+    // setUser({ role: 'member', id: 'M' + Date.now(), firstName, lastName, email,
+              // status: 'Active' });
+
+    setUser({ role: 'member', id: 'M001', firstName, lastName, email,
+               status: 'Active' });
     return { ok: true };
   }
 
