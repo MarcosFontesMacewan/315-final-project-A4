@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { initialMembers } from '../../data/mockData'; // Importing directly for the prototype
+import { useData } from '../../context/DataContext'
 
 export default function Members() {
   const navigate = useNavigate();
+  const { members } = useData();
 
   return (
     <div className="page">
@@ -27,7 +28,7 @@ export default function Members() {
 
       {/* Member Grid */}
       <div className="members-grid">
-        {initialMembers.map((member) => (
+        {members.map((member) => (
           <div key={member.id} className="member-card">
             {/* Default Image */}
             <img src="/person.png" alt="Member avatar" className="member-avatar" />

@@ -168,20 +168,35 @@ export function DataProvider({ children }) {
   function cancelRequest(requestId) {
     return closeRequest(requestId, { status: 'Cancelled' });
   }
-  function returnLoan(loanId) {
-    const loan = loans.find((l) => l.id === loanId);
-    if (!loan || loan.status !== 'Active') return { ok: false, reason: 'Loan is not active.' };
+    function returnLoan(loanId) {
+    setLoans((prevLoans) =>
+      prevLoans.map((loan) => {
+        if (loan.id !== loanId) return loan;
 
-    const today = todayString();
-    const returned = { ...loan, actualReturnDate: today, status: 'Returned' };
+        // 1. Mark as returned
+        const today = new Date();
+        const expected = new Date(loan.expectedReturnDate);
+        
+        // 2. Calculate late fee if applicable
+        let lateFee = 0;
+        let feeStatus = 'None';
 
-    const fee = feeOwed(returned, today); // 0 if on time or already paid
+        if (today > expected) {
+          const diffTime = Math.abs(today - expected);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+          lateFee = 10 + diffDays; // $10 base + $1 per day overdue
+          feeStatus = 'Unpaid';
+        }
 
-    setLoans((prev) => prev.map((l) => (l.id === loanId
-      ? { ...returned, ...(fee > 0 ? { feeStatus: 'Unpaid', lateFee: fee } : {}) } : l)));
-    setCopies((prev) => prev.map((c) => (c.id === loan.copyId ? { ...c, status: 'Available' } : c)));
-
-    return { ok: true };
+        return {
+          ...loan,
+          status: 'Returned',
+          actualReturnDate: today.toISOString().split('T')[0],
+          lateFee: lateFee,
+          feeStatus: feeStatus
+        };
+      })
+    );
   }
 
   function approveRenewal(renewalId, librarianId = 'L001') {

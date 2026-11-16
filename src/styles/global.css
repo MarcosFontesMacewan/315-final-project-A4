@@ -283,3 +283,48 @@ img { display: block; max-width: 100%; }
     flex-wrap: wrap; /* Let buttons wrap on small screens */
   }
 }
+
+/* ---- Suspensions Page ---- */
+.suspensions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.suspension-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+/* Adjust the button size just for this card */
+.suspension-card .btn {
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  width: 100%; /* Make the button span the card width */
+}
+
+/* ---- Librarian Loans Page ---- */
+.loan-admin-details {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  text-align: left;
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-border);
+}
+
+.loan-admin-details p {
+  margin: 0 0 4px 0;
+}
+
+.text-danger {
+  color: #b00020; /* Red text for overdue dates */
+  font-weight: bold;
+}
