@@ -12,10 +12,10 @@ export default function Members() {
         <h1>Member List</h1>
         
         <div className="action-buttons">
-          <button className="btn" onClick={() => navigate('/librarian/loans')}>
+          <button className="btn" onClick={() => navigate('/librarian/members/loan-request')}>
             Loan Requests
           </button>
-          <button className="btn" onClick={() => navigate('/librarian/loans')}>
+          <button className="btn" onClick={() => navigate('/librarian/members/renewal-request')}>
             Renewal Requests
           </button>
           <button className="btn" onClick={() => navigate('/librarian/suspensions')}>
