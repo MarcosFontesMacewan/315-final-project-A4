@@ -78,6 +78,18 @@ export const initialLoans = [
   { id: 'LN0001', memberId: 'M001', copyId: 'C001002', requestId: 'R0001',
     loanDate: '2026-10-20', expectedReturnDate: '2026-11-10', actualReturnDate: null,
     renewCount: 0, lateFee: 0, feeStatus: 'None', feePaidDate: null, status: 'Active' },
+  { id: 'LN0002', memberId: 'M001', copyId: 'C004001', requestId: 'R0002',
+    loanDate: '2026-11-02', expectedReturnDate: '2026-11-23', actualReturnDate: null,
+    renewCount: 0, lateFee: 0, feeStatus: 'None', feePaidDate: null, status: 'Active' },
+  { id: 'LN0003', memberId: 'M004', copyId: 'C005001', requestId: 'R0003',
+    loanDate: '2026-11-14', expectedReturnDate: '2026-12-05', actualReturnDate: null,
+    renewCount: 0, lateFee: 0, feeStatus: 'None', feePaidDate: null, status: 'Active' },
+  { id: 'LN0004', memberId: 'M003', copyId: 'C007001', requestId: 'R0004',
+    loanDate: '2026-11-15', expectedReturnDate: '2026-12-06', actualReturnDate: null,
+    renewCount: 0, lateFee: 0, feeStatus: 'None', feePaidDate: null, status: 'Active' },
+  { id: 'LN0005', memberId: 'M001', copyId: 'C008001', requestId: 'R0005',
+    loanDate: '2026-11-05', expectedReturnDate: '2026-11-26', actualReturnDate: null,
+    renewCount: 0, lateFee: 0, feeStatus: 'None', feePaidDate: null, status: 'Active' },
 ];
 
 // Mock Book Requests
@@ -85,8 +97,23 @@ export const initialLoans = [
 export const initialRequests = [
   { id: 'R0001', memberId: 'M001', bookId: 'B001', requestedAt: '2026-10-31T11:23:00',
     status: 'Approved', decidedBy: 'L001', decidedAt: '2026-10-31T13:23:00' },
+  { id: 'R0002', memberId: 'M001', bookId: 'B004', requestedAt: '2026-11-01T10:05:00',
+    status: 'Approved', decidedBy: 'L001', decidedAt: '2026-11-02T09:00:00' },
+  { id: 'R0003', memberId: 'M004', bookId: 'B005', requestedAt: '2026-11-13T16:40:00',
+    status: 'Approved', decidedBy: 'L001', decidedAt: '2026-11-14T10:00:00' },
+  { id: 'R0004', memberId: 'M003', bookId: 'B007', requestedAt: '2026-11-15T09:10:00',
+    status: 'Approved', decidedBy: 'L001', decidedAt: '2026-11-15T11:00:00' },
+  { id: 'R0005', memberId: 'M001', bookId: 'B008', requestedAt: '2026-11-04T14:20:00',
+    status: 'Approved', decidedBy: 'L001', decidedAt: '2026-11-05T09:30:00' },
 ];
 
 // Mock Renewal Requests
 
-export const initialRenewalRequests = [];
+export const initialRenewalRequests = [
+  { id: 'RN0001', loanId: 'LN0002', requestedAt: '2026-11-15T10:30:00', status: 'Pending',
+    decidedBy: null, decidedAt: null, newReturnDate: '2026-12-07' },
+  { id: 'RN0002', loanId: 'LN0003', requestedAt: '2026-11-16T08:45:00', status: 'Pending',
+    decidedBy: null, decidedAt: null, newReturnDate: '2026-12-12' },
+  { id: 'RN0003', loanId: 'LN0005', requestedAt: '2026-11-12T13:00:00', status: 'Denied',
+    decidedBy: 'L001', decidedAt: '2026-11-12T15:00:00', newReturnDate: '2026-12-03' },
+];

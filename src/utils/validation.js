@@ -22,4 +22,34 @@ export function validateCard(form, loanId, now = new Date()) {
   
     if (!/^\d{3,4}$/.test(form.cvc.trim())) errors.cvc = 'Enter 3 or 4 digits.';
     return errors;
+}
+
+export function validateBook(form, books, editingId, mode) {
+  const errors = {};
+
+  const digits = form.isbn.replace(/[\s-]/g, '');
+  if (!/^\d{9}[\dX]$|^\d{13}$/.test(digits)) {
+    errors.isbn = 'Enter 10 or 13 digits.';
+  } else if (books.some((book) => book.isbn.replace(/[\s-]/g, '') === digits && book.id !== editingId)) {
+    errors.isbn = 'This ISBN is already in the catalog.';
   }
+
+  for (const field of ['title', 'author', 'genre', 'language']) {
+    if (form[field].trim() === '') errors[field] = 'Required.';
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(form.publishDate.trim())) {
+    errors.publishDate = 'Use YYYY-MM-DD.';
+  } else if (addDays(form.publishDate.trim(), 0) !== form.publishDate.trim()) {
+    errors.publishDate = 'Not a real date.';
+  }
+
+  if (mode === 'add') {
+    const copies = Number(form.copies);
+    if (!Number.isInteger(copies) || copies < 1 || copies > 10) {
+      errors.copies = 'Enter 1 to 10.';
+    }
+  }
+
+  return errors;
+}

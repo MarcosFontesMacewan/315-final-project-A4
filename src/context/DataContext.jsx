@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import { todayString, addDays } from '../utils/dates';
-import { nextId } from '../utils/ids';
+import { nextId, nextCopyId } from '../utils/ids';
 import {
   feeOwed, loanDaysFor, borrowBlockReason, renewalBlockReason, renewalDaysError, shouldSuspend,
 } from '../utils/businessRules';
@@ -112,7 +112,24 @@ export function DataProvider({ children }) {
     return { ok: true };
   }
 
-  function addBook(book) { setBooks((prev) => [...prev, book]); }
+  // Makes the book and its copies
+  function addBook(fields, copyCount = 1) {
+    const book = { id: nextId('B', books, 3), ...fields };
+    const newCopies = [];
+    for (let i = 0; i < copyCount; i++) {
+      newCopies.push({
+        id: nextCopyId(book.id, [...copies, ...newCopies]),
+        bookId: book.id,
+        status: 'Available',
+      });
+    }
+
+    setBooks((prev) => [...prev, book]);
+    setCopies((prev) => [...prev, ...newCopies]);
+
+    return { ok: true, book };
+  }
+
   function removeBook(bookId) {
     // A book with a copy OnLoan cannot be removed per business rule
     if (copies.some((c) => c.bookId === bookId && c.status === 'OnLoan'))
@@ -120,6 +137,24 @@ export function DataProvider({ children }) {
 
     setBooks((prev) => prev.filter((b) => b.id !== bookId));
     setCopies((prev) => prev.filter((c) => c.bookId !== bookId));
+
+    return { ok: true };
+  }
+
+  // Edit a book's details
+  function updateBook(bookId, changes) {
+    if (!books.some((b) => b.id === bookId)) return { ok: false, reason: 'Book not found.' };
+
+    setBooks((prev) => prev.map((b) => (b.id === bookId ? { ...b, ...changes } : b)));
+
+    return { ok: true };
+  }
+
+  // Add one more physical copy to a book
+  function addCopy(bookId) {
+    if (!books.some((b) => b.id === bookId)) return { ok: false, reason: 'Book not found.' };
+
+    setCopies((prev) => [...prev, { id: nextCopyId(bookId, prev), bookId, status: 'Available' }]);
 
     return { ok: true };
   }
@@ -168,40 +203,31 @@ export function DataProvider({ children }) {
   function cancelRequest(requestId) {
     return closeRequest(requestId, { status: 'Cancelled' });
   }
-    function returnLoan(loanId) {
-    setLoans((prevLoans) =>
-      prevLoans.map((loan) => {
-        if (loan.id !== loanId) return loan;
+  
+  function returnLoan(loanId) {
+    const loan = loans.find((l) => l.id === loanId);
+    if (!loan || loan.status !== 'Active') return { ok: false, reason: 'Loan is not active.' };
 
-        // 1. Mark as returned
-        const today = new Date();
-        const expected = new Date(loan.expectedReturnDate);
-        
-        // 2. Calculate late fee if applicable
-        let lateFee = 0;
-        let feeStatus = 'None';
+    const today = todayString();
+    const returned = { ...loan, actualReturnDate: today, status: 'Returned' };
 
-        if (today > expected) {
-          const diffTime = Math.abs(today - expected);
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-          lateFee = 10 + diffDays; // $10 base + $1 per day overdue
-          feeStatus = 'Unpaid';
-        }
+    const fee = feeOwed(returned, today); // 0 if on time or already paid
 
-        return {
-          ...loan,
-          status: 'Returned',
-          actualReturnDate: today.toISOString().split('T')[0],
-          lateFee: lateFee,
-          feeStatus: feeStatus
-        };
-      })
-    );
+    setLoans((prev) => prev.map((l) => (l.id === loanId
+      ? { ...returned, ...(fee > 0 ? { feeStatus: 'Unpaid', lateFee: fee } : {}) } : l)));
+    setCopies((prev) => prev.map((c) => (c.id === loan.copyId ? { ...c, status: 'Available' } : c)));
+
+    return { ok: true };
   }
 
   function approveRenewal(renewalId, librarianId = 'L001') {
     const renewal = renewals.find((r) => r.id === renewalId);
     if (!renewal || renewal.status !== 'Pending') return { ok: false, reason: 'Renewal is not pending.' };
+
+    // The loan may have changed since the member asked
+    const loan = loans.find((l) => l.id === renewal.loanId);
+    if (!loan || loan.status !== 'Active') return { ok: false, reason: 'The loan is not active anymore.' };
+    if (loan.renewCount >= 1) return { ok: false, reason: 'This loan was already renewed once.' };
 
     // The loan gets the new due date, and the renewal is Approved
     setLoans((prev) => prev.map((l) => (l.id === renewal.loanId
