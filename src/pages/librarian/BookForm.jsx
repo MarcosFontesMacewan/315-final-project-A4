@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { validateBook } from '../../utils/validation';
+import { lookUpIsbn } from '../../utils/openLibrary';
 import FormField from '../../components/forms/FormField';
 import Button from '../../components/ui/Button';
+import '../../styles/forms.css';
 
 export default function BookForm({ mode, book, books, onSave, onCancel }) {
   const [form, setForm] = useState(() => ({
@@ -18,30 +20,41 @@ export default function BookForm({ mode, book, books, onSave, onCancel }) {
   const [lookup, setLookup] = useState('idle'); // 'idle' | 'loading' | 'notfound'
 
   function setField(key, value) {
+    if (key === 'isbn') setLookup('idle');
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
+  // Fills the form from the ISBN
   async function handleLookUp() {
-    const digits = form.isbn.replace(/\D/g, '');
-    if (digits.length !== 10 && digits.length !== 13) {
+    const digits = form.isbn.replace(/[\s-]/g, '');
+    if (!/^\d{9}[\dX]$|^\d{13}$/.test(digits)) {
       setErrors((prev) => ({ ...prev, isbn: 'Enter 10 or 13 digits.' }));
       return;
     }
 
     setErrors((prev) => ({ ...prev, isbn: undefined }));
     setLookup('loading');
+
+    const found = await lookUpIsbn(digits);
+    if (!found) {
+      setLookup('notfound');
+      return;
+    }
+
+    setForm((prev) => ({ ...prev, ...found }));
+    setLookup('idle');
   }
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    const found = validateBook(form, books, book?.id, mode);
+    const found = validateBook({ ...form, copies }, books, book?.id, mode);
     if (Object.keys(found).length > 0) {
       setErrors(found);
       return;
     }
 
-    const digits = form.isbn.replace(/\D/g, '');
+    const digits = form.isbn.replace(/[\s-]/g, '');
     const fields = {
       isbn: digits,
       title: form.title.trim(),
@@ -49,21 +62,30 @@ export default function BookForm({ mode, book, books, onSave, onCancel }) {
       genre: form.genre.trim(),
       language: form.language.trim(),
       publishDate: form.publishDate.trim(),
-      coverUrl: `https://openlibrary.org{digits}-M.jpg`,
+      coverUrl: mode === 'edit' && book.isbn === digits
+        ? book.coverUrl
+        : `https://covers.openlibrary.org/b/isbn/${digits}-M.jpg`,
     };
 
     onSave(fields, Number(copies));
   }
 
+  // One text box with its label and its error message
+  function textField(label, key) {
+    return (
+      <FormField label={label} error={errors[key]}>
+        <input
+          value={form[key]}
+          onChange={(e) => setField(key, e.target.value)}
+        />
+      </FormField>
+    );
+  }
+
   return (
     <form className="form-card" onSubmit={handleSubmit}>
-      <div className="form-row">
-        <FormField
-          label="ISBN"
-          value={form.isbn}
-          onChange={(val) => setField('isbn', val)}
-          error={errors.isbn}
-        />
+      <div className="form-row isbn-row">
+        {textField('ISBN', 'isbn')}
         <Button type="button" onClick={handleLookUp}>
           Look Up
         </Button>
@@ -72,50 +94,26 @@ export default function BookForm({ mode, book, books, onSave, onCancel }) {
       {lookup === 'loading' && <p>Looking up...</p>}
       {lookup === 'notfound' && <p>Book not found</p>}
 
-      <FormField
-        label="Title"
-        value={form.title}
-        onChange={(val) => setField('title', val)}
-        error={errors.title}
-      />
-      <FormField
-        label="Author"
-        value={form.author}
-        onChange={(val) => setField('author', val)}
-        error={errors.author}
-      />
+      {textField('Title', 'title')}
+      {textField('Author', 'author')}
 
       <div className="form-row">
-        <FormField
-          label="Genre"
-          value={form.genre}
-          onChange={(val) => setField('genre', val)}
-          error={errors.genre}
-        />
-        <FormField
-          label="Language"
-          value={form.language}
-          onChange={(val) => setField('language', val)}
-          error={errors.language}
-        />
+        {textField('Genre', 'genre')}
+        {textField('Language', 'language')}
       </div>
 
-      <FormField
-        label="Publish date (YYYY-MM-DD)"
-        value={form.publishDate}
-        onChange={(val) => setField('publishDate', val)}
-        error={errors.publishDate}
-      />
+      {textField('Publish date (YYYY-MM-DD)', 'publishDate')}
 
       {mode === 'add' && (
-        <FormField
-          label="Number of copies"
-          type="number"
-          min="1"
-          value={copies}
-          onChange={setCopies}
-          error={errors.copies}
-        />
+        <FormField label="Number of copies" error={errors.copies}>
+          <input
+            type="number"
+            min="1"
+            max="10"
+            value={copies}
+            onChange={(e) => setCopies(e.target.value)}
+          />
+        </FormField>
       )}
 
       <div className="form-row">

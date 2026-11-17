@@ -1,3 +1,5 @@
+import { addDays } from './dates';
+
 // For validation purposes, returns an object like { number: 'Enter 16 digits.' }. An empty object means all good.
 export function validateCard(form, loanId, now = new Date()) {
     const errors = {};

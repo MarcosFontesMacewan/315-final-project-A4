@@ -29,11 +29,13 @@ export default function ManageBooks() {
 
   function openAdd() {
     setFormMode('add');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setEditingId(null);
   }
 
   function openEdit(book) {
     setFormMode('edit');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setEditingId(book.id);
   }
 
@@ -89,7 +91,8 @@ export default function ManageBooks() {
           <BookForm
             key={editingId ?? 'new'}
             mode={formMode}
-            initialBook={editingBook}
+            book={editingBook}
+            books={books}
             onSave={handleSave}
             onCancel={closeForm}
           />

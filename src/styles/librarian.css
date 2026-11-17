@@ -25,3 +25,23 @@
 @media (max-width: 600px) {
 .manage-toolbar .search-bar { max-width: none; }
 }
+
+/* Edit form and copy list */
+.manage-form-section { max-width: 480px; margin: 0 auto var(--space-4); }
+.copy-list { margin-top: var(--space-3); }
+.copy-list ul { list-style: none; padding: 0; margin: 0 0 var(--space-2); }
+.copy-row { display: flex; justify-content: space-between; align-items: center;
+            padding: var(--space-1) 0; border-bottom: 1px solid var(--color-border); }
+
+/* Links that look like buttons */
+a.btn { color: inherit; text-decoration: none; }
+
+/* A little space between the status chips and the first card */
+.renewal-requests-page .filter-group { margin-bottom: var(--space-3); }
+
+/* Look Up button lines up with the ISBN box */
+.isbn-row { align-items: flex-start; }
+.isbn-row .btn { margin-top: 1.5rem; padding: var(--space-2) var(--space-3); }
+@media (max-width: 600px) {
+  .isbn-row .btn { margin-top: 0; }
+}

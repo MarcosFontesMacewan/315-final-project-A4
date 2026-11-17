@@ -265,7 +265,7 @@ export function DataProvider({ children }) {
     members, books, copies, loans, requests, renewals,
     availableCopies, activeLoansForMember, hasUnpaidFees, canBorrow,
     borrowBook, renewLoan, payFee, suspendMember, unsuspendMember,
-    addMember, addBook, removeBook,
+    addMember, addBook, updateBook, addCopy, removeBook,
     approveRequest, denyRequest, cancelRequest, returnLoan,
     approveRenewal, denyRenewal, setCopyStatus,
   };

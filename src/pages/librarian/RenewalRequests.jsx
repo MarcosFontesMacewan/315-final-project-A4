@@ -49,7 +49,7 @@ export default function RenewalRequests() {
     }
 
     if (isApprove) {
-      const newDate = result.newDueDate || result.dueDate || row.newDueDate;
+      const newDate = row.newDate;
       setNotice({
         kind: 'ok',
         text: `Approved "${row.bookTitle}". New due date: ${newDate}.`,
