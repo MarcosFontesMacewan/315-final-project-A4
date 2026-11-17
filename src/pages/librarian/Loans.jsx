@@ -2,16 +2,21 @@ import { useState } from 'react';
 import { useData } from '../../context/DataContext';
 import BookCard from '../../components/ui/BookCard';
 
+function bookForLoan(loan, copies, books) {
+  const copy = copies.find((item) => item.id === loan.copyId);
+  return copy ? books.find((book) => book.id === copy.bookId) : undefined;
+}
+
 export default function Loans() {
-  const { loans, books, members, returnLoan } = useData();
+  const { loans, copies, books, members, returnLoan } = useData();
   const [showOverdueOnly, setShowOverdueOnly] = useState(false);
 
   const today = new Date();
 
-  // 1. Filter for Active loans only
+  // Filter for Active loans only
   let activeLoans = loans.filter((loan) => loan.status === 'Active');
 
-  // 2. Apply Overdue filter if toggled
+  // Apply Overdue filter if toggled
   if (showOverdueOnly) {
     activeLoans = activeLoans.filter(
       (loan) => new Date(loan.expectedReturnDate) < today
@@ -28,6 +33,7 @@ export default function Loans() {
         >
           {showOverdueOnly ? 'Showing Overdue Only' : 'Overdue'}
         </button>
+        
       </div>
 
       {activeLoans.length === 0 ? (
@@ -35,8 +41,8 @@ export default function Loans() {
       ) : (
         <div className="book-grid">
           {activeLoans.map((loan) => {
-            const book = books.find((b) => b.id === loan.copyId?.split('00')[0] || b.id === loan.bookId);
-            const member = members.find((m) => m.id === loan.memberId);
+            const book = bookForLoan(loan, copies, books);
+            const member = members.find((item) => item.id === loan.memberId);
             const isOverdue = new Date(loan.expectedReturnDate) < today;
 
             return (
@@ -45,12 +51,15 @@ export default function Loans() {
                 book={book || { title: 'Unknown Book', author: 'N/A' }}
                 footer={
                   <div className="loan-admin-details">
-                    <p><strong>Loaned to:</strong> {member ? member.firstName : loan.memberId}</p>
+                    <p>
+                      <strong>Loaned to:</strong>{' '}
+                      {member ? member.firstName : loan.memberId}
+                    </p>
                     <p className={isOverdue ? 'text-danger' : ''}>
                       <strong>Due:</strong> {loan.expectedReturnDate}
                     </p>
-                    <button 
-                      className="btn btn-primary" 
+                    <button
+                      className="btn btn-primary"
                       style={{ marginTop: '8px', width: '100%', fontSize: '0.8rem' }}
                       onClick={() => returnLoan(loan.id)}
                     >
