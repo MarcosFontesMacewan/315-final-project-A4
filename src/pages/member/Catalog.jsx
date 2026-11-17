@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useData } from '../../context/DataContext';
 import BookCard from '../../components/ui/BookCard';
 import SearchBar from '../../components/ui/SearchBar';
-import FilterChips from '../../components/ui/FilterChips';
+import FilterSelect from '../../components/ui/FilterSelect';
 
 export default function Catalog() {
   const { books, availableCopies, borrowBook } = useData();
@@ -28,8 +28,8 @@ export default function Catalog() {
       <h1>Catalog</h1>
       <div className="catalog-toolbar">
         <SearchBar value={query} onChange={setQuery} />
-        <FilterChips label="Genre" options={genres} selected={genre} onSelect={setGenre} />
-        <FilterChips label="Language" options={languages} selected={language} onSelect={setLanguage} />
+        <FilterSelect label="Genre" options={genres} selected={genre} onSelect={setGenre} />
+        <FilterSelect label="Language" options={languages} selected={language} onSelect={setLanguage} />
       </div>
       <div className="book-grid">
         {filtered.map((b) => (
